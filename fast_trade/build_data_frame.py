@@ -6,8 +6,21 @@ MIN = 1
 HOUR = 60
 DAY = 1440
 
+def dataframe_from_path(ohlcv_path):
+    if type(ohlcv_path) == str:
+        if not os.path.isfile(ohlcv_path):
+            raise Exception(f"File doesn't exist: {ohlcv_path}")
 
-def build_data_frame(ohlcv_path, strategy):
+    df = pd.read_csv(ohlcv_path, parse_dates=True)
+
+    if type(ohlcv_path) == list:
+        # combine the two files
+        df = pd.read_csv(ohlcv_path[0])
+        df.append(pd.read_csv(ohlcv_path[1]))
+    
+    return df
+
+def build_data_frame(df, strategy):
     """
     Params:
         ohlcv_path: string, absolute path of where to find the data file
@@ -15,19 +28,12 @@ def build_data_frame(ohlcv_path, strategy):
         timerange: dict, start/stop keys of datetime in string format
             ex: 2018-01-01 00:00:00
     """
-    if type(ohlcv_path) == str:
-        if not os.path.isfile(ohlcv_path):
-            raise Exception(f"File doesn't exist: {ohlcv_path}")
-
-        df = pd.read_csv(ohlcv_path, parse_dates=True)
-
-    if type(ohlcv_path) == list:
-        # combine the two files
-        df = pd.read_csv(ohlcv_path[0])
-        df.append(pd.read_csv(ohlcv_path[1]))
-
     indicators = strategy.get("indicators", [])
 
+    # df = 
+    # csv2 = csv1[['Acceleration', 'Pressure']].copy()
+
+    df = df[['date', 'close', 'open', 'high', 'low', 'volume']].copy()
     for ind in indicators:
         func = ind.get("func")
         field_name = ind.get("name")

@@ -61,11 +61,11 @@ def determine_action(frame, strategy, df_col_map):
 
 
 def run_backtest(
-    ohlcv_path, strategy, commission=1, starting_aux_bal=1000, exit_on_end=True
+    df, strategy, commission=1, starting_aux_bal=1000, exit_on_end=True
 ):
     """
     Params:
-        csv_path: required, where to find the csv file of the ohlcv data
+        df: required, dataframe with the basic data, see dataframe_from_path to build from a csv
         strategy: required, object containing the logic to test
         starting_aux_balance: optional, int default 1000 how much of the aux coin to
             the backtest
@@ -78,11 +78,12 @@ def run_backtest(
     """
 
     start = datetime.datetime.utcnow()
-    try:
-        df = build_data_frame(ohlcv_path, strategy)
-    except Exception as e:
-        print(e)
-        return "Data frame creation fail"
+    # try:
+        
+    #     df = build_data_frame(df, strategy)
+    # except Exception as e:
+    #     print(e)
+    #     return "Data frame creation fail"
 
     df["actions"] = [
         determine_action(frame, strategy, list(df.columns)) for frame in df.values
